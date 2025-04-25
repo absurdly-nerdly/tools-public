@@ -57,14 +57,13 @@
 #### TS-1 Log:
 
 *   *Results Summary*
-
 *   *Deviations*
-
 *   *Important Notes*
-
 *   *Suggestions for Codebase*
-
 *   *Suggestions for Rules*
+
+#### TS-1 Next Attempt #: 1
+#### TS-1 Problem Reports: []
 
 - - - - - - - - -
 
@@ -101,19 +100,17 @@
 #### TS-2 Log:
 
 *   *Results Summary*
-
 *   *Deviations*
-
 *   *Important Notes*
-
 *   *Suggestions for Codebase*
-
 *   *Suggestions for Rules*
+
+#### TS-2 Next Attempt #: 1
+#### TS-2 Problem Reports: []
 
 - - - - - - - - -
 
 [Add more Task Sets as needed]
-
 
 
 ## Status Legend
