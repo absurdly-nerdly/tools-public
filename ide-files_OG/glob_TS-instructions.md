@@ -1,103 +1,112 @@
 # Guide Instructions and Task Set Implementation Rules
 
-## Task Set Execution Steps
-
-1.   Read the *entire* Orchestrator Guide (`{OG-filepath}`) before starting. *(**DO NOT** read ide-files_OG/glob_TS-post-completion.md at this point. Follow the steps in order)*
-
-2.   Complete all tasks listed within the assigned Task Set (`{X}`).
-
-3.   Execute all validation steps defined within the Task Set's "Validation & End State" section.
-
-*   **Rerun on Edit:** If *any* validation step leads to code edits, you MUST restart and rerun *all* validation steps from the beginning of the validation section for that Task Set. All validation steps must pass consecutively after the final edit.
-
-*   **End State Verification:** After validation, verify the actual end state matches the expected end state defined in the "Validation & End State" section, including exact commands, flags, and arguments.
-
-*   **Scope Control:** Only complete the tasks and validations in the *assigned Task Set*. Do NOT proceed to the next Task Set.
-
-4.  **Document Key Outputs:** Before proceeding to the PCS, document any key outputs or information generated during the Task Set execution (e.g., lists of SKUs, configuration values, test results summaries) in the `#### TS-X Log:` section of the OG file. Ensure this information is clear and easily accessible for subsequent task sets.
-
-5.   **Read, understand, and execute** the instructions/rules in the "Post Completion Steps" by fetching and reading ide-files_OG/glob_TS-post-completion.md.
 
 
-## Implementation Rules
-*   **Scope Control:** Only complete the tasks and validations in the *assigned Task Set*. Do NOT proceed to the next Task Set.
-*   **Mode Switching:** Use `switch_mode` to proceed to and complete tasks that are assigned to other modes within the same TS. Do not read PCS and do not `attempt_completion` when tasks have not yet been attempted (due to being in incorrect mode) - just switch modes.
-*   **OG Task Issues:** If an OG task needs clarification, has a conflict, or cannot be completed as planned, do not improvise or deviate. Use `attempt_completion` to query the user with progress and suggestions.
-*   **Task Set Status:** Never update the overall Task Set status (e.g., `**TS-X Status:** ⚪`). Only update the status of individual tasks and validation steps within the Task Set.
-*   **Context Limit:** If `Current Context Size (Tokens)` > 250,000, immediately `switch_mode` to Analyst, conduct a Root Cause Analysis to identify the issue (don't resolve it at this time), create a PR, and then `attempt_completion` to report the failure of the task set and the PR path.
-*   **Mode Tracking:** In *every* response, state the mode you are in *currently*.
-*   **Missing Components:** If a component needed for a test doesn't exist, `attempt_completion` to report the issue.
-*   **Test Strategy Documentation:** Document successful strategies and helper functions for interacting with complex or non-standard UI components, including any workarounds developed, in `continuous-improvement.md` for future reference.
-
-## **Auth-Icon-A:** 🦘
----
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Task Set Branch & Subtask Workflow (Executed by Laborer)
+## Task Set Branch Workflow (Executed by Laborer) (approx. lines 3-50)
 
 *Follow steps in this exact order. Do not `switch_mode` under any circumstances.*
-*:
 
 1.  **Start Task Set Branch:** Create/switch to the feature branch.
-    *   **Script:** `python ide-files_OG/glob_start-task-set-branch.py <OG_file_path> <OG_Number> <TS-number> <NextAttemptNumber>`
-        *   *(Use variables provided by Orchestrator in the initial `new_task` message: `{OG_file_path}`, `{OG_Number}`, `{TS-number}`, `{attempt_number}`)*
+    *   **Script:** `python ide-files_OG/glob_start-task-set-branch.py <OG_file_path> <OG_Number> <TS-number> <AttemptNumber>`
+        *   *(Use variables provided: `{OG_file_path}`, `{OG_Number}`, `{TS-number}`, `{AttemptNumber}`)*
     *   **Action:** The script prints `git status`, checks out `main`, commits pending changes, creates the branch (`OG-{OG_Number}_TS-{TS-number}_attempt-{N}`), checks it out, and runs `git status` again.
-    *   **Verify:** Confirm branch creation/checkout using `git status` or `git branch --show-current`. **CRITICAL:** Do *not* assume success based on script exit code if undefined or no response is returned. Retry twice on failure. If third attempt fails, report via `attempt_completion` with error. Do not proceed until branch checkout is confirmed successful.
+    *   **Verify:** Confirm branch creation/checkout using `git status` or `git branch --show-current`. Retry twice on failure. If third attempt fails, report via `ask_followup_question` with error. Do not proceed until successful.
 
 2.  **Identify Mode & Create Subtask:** Delegate the Task Set implementation.
-    *   **Identify:** Use the `{Mode}` variable provided by Orchestrator in the initial `new_task` message.
-    *   **Create `new_task`:** Use the following message **VERBATIM**, replacing placeholders with variables provided by Orchestrator in the initial `new_task` message:
+    *   **Identify:** Use the `{Mode}` variable provided.
+    *   **Create `new_task` for Laborer:** Use the following message **VERBATIM**, replacing placeholders with variables provided:
         ```
-        🌿 {Mode}: OG-{OG_Number}_TS-{TS-number}_Attempt-{NextAttemptNumber}
-        *Follow steps in this exact order*:
-        1.  **FIRST**, review the rules in the global Task Set Instructions file (ide-files_OG/glob_TS-instructions.md, lines 1-50).
-        2.  **SECOND**, read the file `{OG-filepath}`. Within this OG file, locate and read the Task Set {TS-number} section.
-        3.  **THIRD**, complete Task Set {TS-number} from `{OG-filepath}`, adhering to the rules reviewed in Step 1 (lines 1-50 of ide-files_OG/glob_TS-instructions.md).
-        4.  **FOURTH**, After completion of Task Set {TS-number} (*not before*) read the *entire* global Task Set Post Completion instructions file: ide-files_OG/glob_TS-post-completion.md.
-        5.  **FIFTH**, Adhering to the rules in the post-completion file read in Step 4, update `{OG-filepath}`.
-        6.  **SIXTH**, `attempt_completion` with exactly the following:
-            a.  **Auth-Icon-A:** 🦘 (from ide-files_OG/glob_TS-instructions.md).
-            b.  **Auth-Icon-B:** 🪃
-            c.  A **brief** completion message, including any output or information required for subsequent Task Sets.
+        🌿 {Mode}: OG-{OG_Number}_TS-{TS-number}_Attempt-{AttemptNumber}
+        *Starting in Laborer mode. Follow instructions precisely:*
+        *In `ide-files_OG/glob_TS-instructions.md`, `read_file` only lines 60-120, find the 'Task Set Subtask Workflow' section, and follow those instructions exactly.*
+        *Use these variables:*
+        - OG File Path: {OG-filepath}
+        - Task Set Number: {TS-number}
+        - Assigned Mode: {Mode}
         ```
-        *(Replace `{Mode}`, `{OG_Number}`, `{TS-number}`, `{OG-filepath}` using variables provided by Orchestrator. NO additional content.)*
-    *   **Action:** The subtask will use `attempt_completion` with the specified format.
-    *   **Verify:** Ensure the `attempt_completion` message includes any required information for subsequent Task Sets.
-3.  **Await Subtask Completion:** Wait for the assigned mode to finish and provide its `attempt_completion` response.
+        *(Replace `{Mode}`, `{OG_Number}`, `{TS-number}`, `{AttemptNumber}`, `{OG-filepath}`. NO additional content.)*
+    *   **Action:** The subtask will start in Laborer mode and follow the workflow, and respond with the specified format (Auth Icons + message).
+    *   **Verify:** Ensure the message from the subtask includes any required information for subsequent Task Sets.
+
+3.  **Await Subtask Completion:** Wait for the subtask's response.
 
 4.  **Validate Subtask Execution:** Verify the work done in the subtask.
     *   **Run Verification Steps:** Execute the project-specific verification steps defined in the OG's 'Validation & End State' section for this Task Set.
         *   **Command:** [Refer to the OG for the specific commands/tool usage]
-        *   *(Use variables provided by Orchestrator in the initial `new_task` message: `{CurrentBranchName}`, `{URL_from_OG}`, `{LogPrompt_from_OG}`, `{ImagePrompt_from_OG}`. Source URL and prompts directly from the OG's `Validation & End State` section for TS-{TS-number}. Only include prompt args if specified there.)*
+        *   *(Use variables provided: `{CurrentBranchName}`, `{URL_from_OG}`, `{LogPrompt_from_OG}`, `{ImagePrompt_from_OG}`. Source URL/prompts from OG's `Validation & End State` for TS-{TS-number}. Only include prompt args if specified.)*
         *   **Action:** Perform the specified verification steps using `execute_command` or appropriate MCP tools.
         *   **Review:** Examine the output for critical errors/warnings and compare against expected results in the OG.
-    *   **Perform Unique Check:** Execute at least one *unique* validation step specific to the Task Set's goal (e.g., Playwright MCP interaction, specific `read_file` check, `firebase-emulator-mcp` query, custom project script analysis, `playwright_mcp` screenshot + `any-vision-mcp` analysis, etc.) to confirm the core change.
+    *   **Perform Unique Check:** Execute at least one *unique* validation step specific to the Task Set's goal (e.g., Playwright MCP interaction, `read_file` check, `firebase-emulator-mcp` query, `playwright_mcp` screenshot + `any-vision-mcp` analysis, etc.) to confirm the core change.
 
-5.  **Report completion via `attempt_completion`:** Use `attempt_completion` to report a comprehensive result. This result MUST include: a) The outcome of the verification steps (Step 4a), b) The outcome of the unique validation check (Step 4b), and c) The completion message received from the Assigned Mode's subtask (Step 3). Ensure all details are captured.
+5.  **Respond via `attempt_completion`:** Report comprehensive results: a) verification script outcome, b) unique validation type and outcome, c) subtask completion message. Ensure all details are captured.
+-- -- --
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Task Set Execution Instructions (Executed by Assigned Mode, starting in Laborer) (approx. lines 60-120)
+
+### Task Set Execution Workflow
+*Follow these steps precisely. The initial mode is Laborer.*
+
+**Phase 1: Preparation (Laborer -> Architect)**
+
+1.  **Read OG & Context (Laborer):**
+    *   Read the *entire* Orchestrator Guide (`{OG-filepath}`).
+    *   Read all files listed in the assigned Task Set's (`{X}`) `Files to Edit` and `Resources` sections.
+    *   Read any other files necessary per OG instructions.
+    *   *(Do NOT read `_10_ide/TS-post-completion.md` yet).*
+2.  **Switch to Architect:** Use `switch_mode`.
+3.  **Plan (Architect):**
+    *   State current mode (`Architect Mode`).
+    *   Formulate and state a detailed, step-by-step execution plan based on the OG Task Set (`{X}`) and gathered context.
+
+**Phase 2: Execution & Wrap-up (Architect -> Assigned Mode)**
+
+4.  **Switch to Assigned Mode:** Use `switch_mode` to the mode specified in the OG (`{Mode}`).
+5.  **Execute (Assigned Mode - `{Mode}`):**
+    *   State current mode (`{Mode} Mode`).
+    *   Execute the Architect's plan, completing all tasks in the assigned Task Set (`{X}`). 
+    *   Adhere strictly to the Task Set Execution Rules below and OG/user instructions.
+6.  **Validate:**
+    *   Execute *all* validation steps defined in the Task Set's "Validation & End State".
+    *   **Rerun on Edit:** If any validation leads to code edits, restart and rerun *all* validation steps consecutively. Debug and iterate until all validations pass consecutively.
+    *   **Verify End State:** Confirm actual state matches expected state (commands, flags, args).
+    *   **Scope:** Complete *only* the assigned Task Set.
+7.  **Post Completion:** Read `_10_ide/TS-post-completion.md`** and execute all instructions within it. This includes exact instructions for updating the OG document and reporting completion.  *Auth-Icon-A:* 🦘
+
+
+### Task Set Execution Rules
+
+*   **Scope Control:** Only complete the assigned Task Set. Do not proceed to the next.
+*   **Mode Switching:** Use `switch_mode` if tasks within the *same* TS require different modes. Do not read `TS-post-completion.md` or `attempt_completion` if tasks remain in the current TS for another mode.
+*   **OG Task Issues:** If unable to complete a task as planned, use `attempt_completion` to query the user with progress and suggestions. Do not improvise unless a success path is clear and it does not deviate from the High Level Objectives and Execution Notes in the OG.
+*   **Task Set Status:** *Never* update the overall Task Set status (e.g., `**TS-X Status:** ⚪`). Only update individual task/validation statuses.
+*   **Context Limit (>200k tokens):** Immediately `switch_mode` to Analyst, perform RCA, create PR, then `attempt_completion` reporting failure and PR path.
+*   **Mode Tracking:** State current mode in *every* response.
+*   **Missing Components:** Report via `attempt_completion` if components expected to exist don't exist.
+*   **Test Strategy Docs:** Add clear docstrings for complex UI interaction strategies/helpers.
+*   **Laborer Restrictions:** Laborer MUST NOT use `switch_mode` except as directed by workflow (to Architect, then Assigned Mode). Laborer MUST NOT switch to any other mode. If issues are encountered while in Laborer mode, report them via `ask_followup_question` or `attempt_completion`. 
+-- -- --

@@ -23,7 +23,7 @@ Carefully update the relevant Task Set section in the OG document:
    - **Add Log Sections:**
      - **Results Summary:** 1-4 concise sentences summarizing the Task Set outcome.
      - **Deviations:** Note any deviations from the original plan and the reasons for them.
-     - **Important Notes (Optional):** Max 3 notes, ranked by importance.
+     - **Important Notes (Optional):** Ranked by importance. Use to record key outputs (SKUs, config values, test summaries) or notable observations.
      - **Suggestions for Codebase (Optional):** Max 3 high-level, impactful recommendations for codebase maintainability improvements. Avoid overlap with Rules suggestions. Do not repeat previous suggestions.
      - **Suggestions for Rules (Optional):** Max 5 suggestions for improving rules files (Refer to relevant rules files for the current project, e.g., `.roo/rules/rules.md`) to enhance maintainability or automation. Rank by importance. Mark critical suggestions with `🛑`. Avoid overlap with Codebase suggestions. Do not repeat previous suggestions.
       - **Problem Reports (PRs):** If any PR files were created during *this* Task Set implementation, list their file paths here. For each PR listed, indicate whether the core issue documented within it was resolved.
