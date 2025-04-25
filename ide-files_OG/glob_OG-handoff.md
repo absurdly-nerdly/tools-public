@@ -36,7 +36,7 @@
 ## 4. Outstanding Issues / Critical Notes / Context
 
 *   [List any known blockers, critical warnings from logs, pending decisions, environment issues, or important context not captured elsewhere. This is crucial for the receiving Orchestrator.]
-*   [Example: "The verification script `verify-task-set.py` consistently timed out during the last attempt on TS{X-1}. Root cause unknown."]
+*   [Example: "A verification step consistently timed out during the last attempt on TS{X-1}. Root cause unknown."]
 *   [Example: "User approval is pending for the adjustments made in PR-ZZ."]
 
 ---
@@ -49,12 +49,12 @@
 4.  **Analyze & Verify Current State:**
     *   **Crucially:** Based on the OG, this handoff doc, and any associated PRs for failed Task Sets, analyze the state of the project *while on the `main` branch*.
     *   **Verify:** If there are *any* ambiguities, conflicting information, or potential inconsistencies, **perform verification steps**. This might include:
-        *   Running initial state checks (`npm run lint`, rendering/console tests).
-        *   Verifying specific file contents or data.
+        *   Running project-specific initial state checks (e.g., linting, rendering/console tests).
+        *   Verifying specific file contents or data using appropriate tools.
         *   Consulting logs or outputs mentioned in PRs.
     *   Do not proceed if the current state is unclear or seems incorrect. Resolve discrepancies first.
 5.  **Consult Problem Reports (PRs):** If failed Task Sets (❌) are indicated, review the associated Problem Report (PR) files for details.
 6.  **Adjust Original OG (If Necessary, on `main`):** If your analysis (Step 4) reveals that the plan in the *original* OG needs adjustments *before* proceeding with Task Set {X}, make those adjustments directly to the OG file **while still on the `main` branch**. Commit them with a clear message (e.g., `git add [OG path]; git commit -m "OG-{OG_Number}: Adjust plan before resuming TS{X} based on handoff analysis"`).
-7.  **Resume Execution (Branching from `main`):** Once the state is understood, verified, and the OG is adjusted (if needed), continue the Orchestrator workflow as defined in `.roo/rules-orchestrator/rules.md`, starting from **Step 3 (Start Task Set Branch)**. This step explicitly involves creating a *new branch* from the potentially updated `main` branch for the **Current/Next Task Set ({X})**. Use the *original* OG as the primary guide.
+7.  **Resume Execution (Branching from `main`):** Once the state is understood, verified, and the OG is adjusted (if needed), continue the Orchestrator workflow as defined in the global Orchestrator rules (.roo/rules-orche-global/rules.md), starting from the step for initiating a Task Set branch. This step explicitly involves creating a *new branch* from the potentially updated `main` branch for the **Current/Next Task Set ({X})**. Use the *original* OG as the primary guide.
 8.  **Update Original OG (During Execution on Feature Branch):** Ensure all progress, logs, and status changes *during your execution on the feature branch* are accurately reflected *only* in the *original* OG file (`[Relative Path to the Original OG File]`) as you complete tasks and Task Sets. Do not update this handoff document further.
 9.  **Initiate Workflow:** After successfully verifying the state and potentially adjusting the OG on `main`, `suggest` creating a new subtask in Orchestrator Mode to formally begin execution of Task Set {X}. If approved, at minimum, provide to the subtask the path to the original OG (`[Relative Path to the Original OG File]`) and confirm the starting Task Set number ({X}) as context for the new task. If more context is helpful, provide it.

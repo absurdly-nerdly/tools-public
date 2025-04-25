@@ -5,17 +5,13 @@ import os
 import shutil
 import tempfile
 import re
-from components.confirmation_popup import show_confirmation
-
-# --- Configuration ---
-SHOW_CONFIRMATION_POPUP = True  # Set to False to disable the confirmation popup
-# ---------------------
-
+# Removed: from components.confirmation_popup import show_confirmation
 
 def get_current_branch():
+    """Gets the current git branch name."""
     try:
-        result = subprocess.run(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], 
-                              capture_output=True, text=True, check=True)
+        result = subprocess.run(['git', 'rev-parse', '--abbrev-ref', 'HEAD'],
+                               capture_output=True, text=True, check=True)
         return result.stdout.strip()
     except subprocess.CalledProcessError as e:
         print(f"Error detecting current branch: {e}")
@@ -30,7 +26,7 @@ def get_all_changed_files():
         # Get untracked files
         untracked_result = subprocess.run(['git', 'ls-files', '--others', '--exclude-standard'],
                                           capture_output=True, text=True, check=True)
-        
+
         all_files = modified_result.stdout.splitlines() + untracked_result.stdout.splitlines()
         return all_files
     except subprocess.CalledProcessError as e:
@@ -41,7 +37,7 @@ def format_fail_commit_message(branch_name, reason):
     """Formats the commit message based on branch name and failure reason."""
     # Regex to match branch name format OG-XX_TS-YY or OG-XX_TS-YY_attempt-ZZ
     match = re.match(r'^OG-(\d+)_TS-(\d+)(_attempt-(\d+))?$', branch_name)
-    
+
     if match:
         og_number = match.group(1)
         task_set_number = match.group(2)
@@ -79,7 +75,7 @@ def move_files_to_temp(files, temp_root):
             temp_path = os.path.join(temp_root, original_path)
             temp_dir = os.path.dirname(temp_path)
             os.makedirs(temp_dir, exist_ok=True)
-            
+
             # Move the file
             if os.path.exists(original_path): # Ensure file exists before moving
                 shutil.move(original_path, temp_path)
@@ -116,12 +112,19 @@ def main():
     parser = argparse.ArgumentParser(description='Clean up after failed task')
     parser.add_argument('--r', required=False, default="No reason provided", help='Failure Reason: (default: "No reason provided")')
     parser.add_argument('--delete-branch', action='store_true', help='Delete the branch after cleanup (default is to preserve)')
+    parser.add_argument(
+        "--main-branch",
+        type=str,
+        default="main",
+        help="The name of the main integration branch (default: main)."
+    )
     args = parser.parse_args()
 
     try:
         current_branch = get_current_branch()
-        branch_to_delete = current_branch if current_branch != 'main' else None
-        
+        main_branch = args.main_branch # Use the provided main branch name
+        branch_to_delete = current_branch if current_branch != main_branch else None
+
         print("1. Getting list of all changed files...")
         all_changed_files = get_all_changed_files()
         if not all_changed_files:
@@ -159,17 +162,17 @@ def main():
             temp_dir = tempfile.mkdtemp(prefix='git_fail_')
             print(f"  Created temp directory: {temp_dir}")
             original_to_temp_map = move_files_to_temp(needed_files, temp_dir)
-        
-        print("5. Checking out main branch...")
-        subprocess.run(['git', 'checkout', 'main'], check=True)
-        print("  Successfully checked out 'main'.")
-        
+
+        print(f"5. Checking out {main_branch} branch...")
+        subprocess.run(['git', 'checkout', main_branch], check=True)
+        print(f"  Successfully checked out '{main_branch}'.")
+
         if args.delete_branch and branch_to_delete:
             print(f"6. Deleting branch {branch_to_delete} (--delete-branch flag set)...")
             subprocess.run(['git', 'branch', '-D', branch_to_delete], check=True)
             print(f"  Successfully deleted branch '{branch_to_delete}'.")
         elif args.delete_branch:
-             print("6. Skipping branch deletion (already on 'main' or no branch to delete, despite --delete-branch flag).")
+             print(f"6. Skipping branch deletion (already on '{main_branch}' or no branch to delete, despite --delete-branch flag).")
         else:
              print("6. Preserving branch (default behavior).")
 
@@ -202,32 +205,22 @@ def main():
             print(f"  Successfully committed restored files with message: '{commit_message_restore}'")
         else:
             print("  No restored files staged for commit.")
-            
+
         # Clean up temp directory if it was created
         if temp_dir and os.path.exists(temp_dir):
             print(f"9. Cleaning up temporary directory: {temp_dir}")
             shutil.rmtree(temp_dir, ignore_errors=True)
         else:
             print("9. No temporary directory to clean up.")
-            
+
         print("\nOperation completed successfully!")
 
-        # --- Confirmation Popup ---
-        if SHOW_CONFIRMATION_POPUP:
-            if branch_to_delete:
-                msg = f"Task set failed on branch: '{branch_to_delete}'.\n\nCleanup complete. Approve to exit, or Cancel to abort exit."
-            else:
-                msg = "Task set failed (started on 'main' or branch unknown).\n\nCleanup complete. Approve to exit, or Cancel to abort exit."
-            canceled = show_confirmation(msg, "Task Set Failed")
-            # If user cancels, just exit (same as before)
-            sys.exit(0)
-        # --- End Confirmation Popup ---
-        
+        # Removed: Confirmation Popup
+
         # Show final git status
         print("\nFinal git status:")
         subprocess.run(['git', 'status'], check=False)
-        
-        # Ensure process always exits, even if popup is disabled
+
         sys.exit(0)
 
     except subprocess.CalledProcessError as e:

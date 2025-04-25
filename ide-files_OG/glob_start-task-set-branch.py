@@ -5,13 +5,14 @@ Automates the Git workflow for starting a new Task Set branch in the Orchestrato
 Handles both initial attempts and retries with different branch naming formats.
 
 Usage:
-    Initial attempt: python start-task-set-branch.py <og_file_path> <og_number> <task_set_number>
-    Retry attempt: python start-task-set-branch.py <og_file_path> <og_number> <task_set_number> <attempt_number>
+    Initial attempt: python glob_start-task-set-branch.py <og_file_path> <og_number> <task_set_number> [--main-branch <branch_name>]
+    Retry attempt: python glob_start-task-set-branch.py <og_file_path> <og_number> <task_set_number> <attempt_number> [--main-branch <branch_name>]
 """
 
 import subprocess
 import sys
 import re
+import argparse
 
 def run_git_command(cmd, check=True):
     """Run a Git command and return its output."""
@@ -29,15 +30,24 @@ def run_git_command(cmd, check=True):
         sys.exit(1)
 
 def main():
-    if len(sys.argv) not in [4, 5]:
-        print("Usage (initial attempt): python start-task-set-branch.py <og_file_path> <og_number> <task_set_number>")
-        print("Usage (retry attempt): python start-task-set-branch.py <og_file_path> <og_number> <task_set_number> <attempt_number>")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(description="Start a new Task Set branch.")
+    parser.add_argument("og_file_path", help="Path to the Orchestrator Guide file.")
+    parser.add_argument("og_number", help="OG number.")
+    parser.add_argument("task_set_number", help="Task Set number.")
+    parser.add_argument("attempt_number", nargs='?', type=int, default=1, help="Attempt number (default: 1).")
+    parser.add_argument(
+        "--main-branch",
+        type=str,
+        default="main",
+        help="The name of the main integration branch (default: main)."
+    )
+    args = parser.parse_args()
 
-    og_file_path = sys.argv[1]
-    og_number = sys.argv[2]
-    task_set_number = sys.argv[3]
-    attempt_number = int(sys.argv[4]) if len(sys.argv) == 5 else 1
+    og_file_path = args.og_file_path
+    og_number = args.og_number
+    task_set_number = args.task_set_number
+    attempt_number = args.attempt_number
+    main_branch = args.main_branch
 
     # Validate number formats
     if not re.match(r'^\d+$', og_number):
@@ -53,11 +63,11 @@ def main():
     # Show initial status
     print("\nInitial git status:")
     print(run_git_command(["status"]))
-    
+
     # Ensure we're on main branch
-    print("\nEnsuring clean main branch...")
-    run_git_command(["checkout", "main"])
-    
+    print(f"\nEnsuring clean {main_branch} branch...")
+    run_git_command(["checkout", main_branch])
+
     # Check git status
     status_output = run_git_command(["status", "--porcelain"])
     status_lines = status_output.split('\n') if status_output else []
@@ -75,10 +85,10 @@ def main():
     if status_lines:
         print("Staging all changes...")
         run_git_command(["add", "."])
-        
+
         commit_msg = f"OG-{og_number} TS-{task_set_number}: Doc update before Attempt-{attempt_number}"
         run_git_command(["commit", "-m", commit_msg])
-        
+
         if has_og_file and has_other_files:
             print(f"Committed {og_file_path} and other files.")
         elif has_og_file:
@@ -93,9 +103,9 @@ def main():
     else:
         branch_name = f"OG-{og_number}_TS-{task_set_number}"
         print(f"Creating initial branch: {branch_name}")
-    
+
     run_git_command(["checkout", "-b", branch_name])
-    
+
     # Show final status
     print("\nTask Set branch created successfully. Current status:")
     print(run_git_command(["status"]))

@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-This document provides a template and instructions for Orchestrators to document suggestions and debug findings in dedicated files and generate the final `attempt_completion` response after successfully completing all High-Level Objectives defined in an Orchestrator Guide (OG). 
+This document provides a template and instructions for Orchestrators to document suggestions and debug findings in dedicated files and generate the final `attempt_completion` response after successfully completing all High-Level Objectives defined in an Orchestrator Guide (OG).
 
 ## 2. Orchestrator Instructions: OG Completion Workflow
 
@@ -18,14 +18,14 @@ Upon successful completion of all High-Level Objectives in an OG:
     *   Important notes recorded during execution.
     *   Suggestions for codebase improvements for maintainability.
     *   Suggestions for other significant codebase improvements.
-    *   Suggestions for automation improvements (e.g. testing, improvements to py scripts, etc.).
+    *   Suggestions for automation improvements (e.g. testing, improvements to scripts, etc.).
     *   Suggestions for rule enhancements (Orchestrator, O-Coder, Debug, Analyst, etc.).
-    *   Confirmed, helpful debugging steps or findings.
+    *   Confirmed, helpful debugging steps and findings.
 6.  **Update Dedicated Files:**
     *   **`_00_user-docs\continuous-improvement.md`:**
         *   Add consolidated codebase suggestions.
         *   Mark `complete` (✅) any existing/past items that are now resolved.
-        *   Mark `new info` (🎁) any existing/past items that may potentially now be resolved based on new info/code state. 
+        *   Mark `new info` (🎁) any existing/past items that may potentially now be resolved based on new info/code state.
     *   **`_00_user-docs/debug_history.md`:**
         *   Add confirmed, helpful debug findings under a new heading `## Findings from OG-{OG_Number}`.
         *   **Format:** Document the symptom, the successful diagnostic step/tool usage, and the confirmed finding. Prepend each finding set with `- [OG-{OG_Number}/PR-{PR_Number or TS-X}]`. Add the commit hash of the final merge commit if relevant.
@@ -70,7 +70,7 @@ Upon successful completion of all High-Level Objectives in an OG:
 
 *   **Suggestions for Codebase Maintainability (`_00_user-docs\continuous-improvement.md`):**
     *   [List 1-3 (minimum 1) key suggestions added, or state "N suggestions added."]
-*   **Rule Suggestions (`.roo/rules/rules.md`, mode-specific `.roo\rules-*\rules.md` files. **ALWAYS** read and consider improvements to `.roo/rules-orchestrator/rules.md` - this is a continuous-improvement focus):**
+*   **Rule Suggestions (Refer to relevant rules files, e.g., `.roo/rules/rules.md`):**
     *   [List 1-5 (minimum 1) key suggestions added, or state "N suggestions added."]
 *   **Debug History (`_00_user-docs/debug_history.md`):**
     *   [List 1-3 key findings added, or state "N findings added."]

@@ -13,9 +13,9 @@
 1. (@filename.ext) : (why the file is relevant to the issue)
 
 
-- - - - - - - - - 
+- - - - - - - - -
 ## **Confidence:**: *%*
-## **Root Cause**: 
+## **Root Cause**:
 
 -
 
@@ -23,7 +23,7 @@
 
 -
 
-- - - - - - - - - 
+- - - - - - - - -
 ### **Reproduction Steps**: (Steps to reproduce the issue)
 
 -
@@ -36,7 +36,7 @@
 
 -
 
-- - - - - - - - - 
+- - - - - - - - -
 ### **Other Possible Causes, Eliminated**: (Other possible causes that were considered but ruled out)
 
 -
@@ -45,21 +45,18 @@
 
 -
 
-- - - - - - - - - 
+- - - - - - - - -
 
-## Verification Script Outputs
-
+## Verification Outputs
 
 - **Initial Attempt Output:**
   ```
-
+  [Include relevant output from project-specific verification tools/commands]
   ```
 - **Retry Attempt Output:**
   ```
-
+  [Include relevant output from project-specific verification tools/commands]
   ```
-
-
 
 
 ## **Important Notes**:
@@ -73,6 +70,3 @@
 ### **Suggestions for Rules**:
 
 -
-
-
-

@@ -59,7 +59,7 @@ This section details how to create and populate an effective OG.
             *   **Scope:** Clearly state if setup (e.g., emulator seeding) is part of the task or a prerequisite.
             *   **Status:** Use `⚪` for initial status.
         *   `**Validation & End State:**`
-            *   Define steps to confirm *both* **TS completion** and **UI/system integrity**. Validation steps MUST explicitly state the tool/command used (e.g., `playwright_get_visible_text`, `firebase-mcp firestore_get_document`, `npm test`, `python manage.py lint`) and the *exact* comparison logic (e.g., 'verify text equals X', 'verify value is greater than Y', 'verify output contains Z'). Avoid vague descriptions like 'verify it works'.
+            *   Define steps to confirm *both* **TS completion** and **UI/system integrity**. Validation steps MUST explicitly state the tool/command used (e.g., `playwright_get_visible_text`, `firebase-emulator-mcp firestore_get_document`, `npm test`, `python manage.py lint`) and the *exact* comparison logic (e.g., 'verify text equals X', 'verify value is greater than Y', 'verify output contains Z'). Avoid vague descriptions like 'verify it works'.
             *   Specify validation method(s) using project-appropriate tools:
                 *   Project-specific test runner (e.g., `npm test`, `pytest`)
                 *   Project-specific linter (e.g., `npm run lint`, `flake8`)
@@ -226,7 +226,7 @@ This workflow uses feature branches and automation scripts to manage Task Set im
     *   Data Validation: Combine UI checks with direct data verification using `firebase-emulator-mcp` or `firebase-mcp` tools to confirm underlying state changes.
     *   Custom Project Scripts: If the project has specific verification scripts.
     Explicitly define the tool, command, and comparison logic in the OG validation steps.
-*   **Visual Validations:** Use `playwright_screenshot` + `any-vision-mcp` when robust methods are insufficient or impractical for verifying the specific change (e.g., complex layout shifts, graphical element verification). Clearly justify its use in the OG Execution Notes or Validation step description, and provide specific requirement for pass/fail logic.
+*   **Visual Validations:** Use `playwright_screenshot` + `any-vision-mcp` *only* when robust methods are insufficient or impractical for verifying the specific change (e.g., complex layout shifts, graphical element verification). Clearly justify its use in the OG Execution Notes or Validation step description.
 *   **Concise Instructions:** For tool-based steps (like Playwright MCP), describe the action using abbreviated steps (e.g., `Use Playwright MCP: playwright_navigate to {URL}, then playwright_screenshot named '...'`) rather than including the full tool XML.
 *   **Context Limit Handling:** If `Current Context Size (Tokens)` exceeds 200,000 tokens, use `ask_followup_question` immediately.
     *   **Question:** "❗WARNING: CONTEXT SIZE = {token-count} TOKENS❗ Exceeding limit. How should we proceed?"
@@ -256,25 +256,6 @@ This workflow uses feature branches and automation scripts to manage Task Set im
         *   Await Writer's completion and mode switch back to Orchestrator.
         *   Review the debrief report and updated documentation files created by Writer (do not `read_file`, just review recent conversation context). Make final adjustments if needed.
         *   The OG process is now complete. `attempt_completion` with a brief message indicating the successful completion of the OG and the creation of the debrief report.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 ## Delegated Workflows
@@ -314,7 +295,7 @@ This workflow uses feature branches and automation scripts to manage Task Set im
     *   **Run Verification Steps:** Execute the project-specific verification steps defined in the OG's 'Validation & End State' section for this Task Set.
         *   **Command:** [Refer to the OG for the specific commands/tool usage]
         *   *(Use variables provided by Orchestrator in the initial `new_task` message: `{CurrentBranchName}`, `{URL_from_OG}`, `{LogPrompt_from_OG}`, `{ImagePrompt_from_OG}`. Source URL and prompts directly from the OG's `Validation & End State` section for TS-{TS-number}. Only include prompt args if specified there.)*
-        *   **Action:** Perform 1-2 of the specified verification steps using `execute_command` or appropriate MCP tools.
+        *   **Action:** Perform the specified verification steps using `execute_command` or appropriate MCP tools.
         *   **Review:** Examine the output for critical errors/warnings and compare against expected results in the OG.
     *   **Perform Unique Check:** Execute at least one *unique* validation step specific to the Task Set's goal (e.g., Playwright MCP interaction, specific `read_file` check, `firebase-emulator-mcp` query, custom project script analysis, `playwright_mcp` screenshot + `any-vision-mcp` analysis, etc.) to confirm the core change.
 
