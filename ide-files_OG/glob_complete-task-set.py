@@ -6,6 +6,7 @@ import re
 
 def run_command(command, capture=True, check=True, suppress_output=False):
     """Runs a shell command, captures output, and handles errors."""
+    # command_str = ' '.join(command) # No longer needed for shell=False
     if not suppress_output:
         # Display joined command for logging purposes
         print(f"Executing: {' '.join(command)}")
@@ -46,7 +47,7 @@ def format_complete_commit_message(branch_name, summary):
     """Formats the commit message based on branch name and summary."""
     # Regex to match branch name format OG-XX_TS-YY or OG-XX_TS-YY_attempt-ZZ
     match = re.match(r'^OG-(\d+)_TS-(\d+)(_attempt-(\d+))?$', branch_name)
-
+    
     if match:
         og_number = match.group(1)
         task_set_number = match.group(2)
@@ -58,6 +59,7 @@ def format_complete_commit_message(branch_name, summary):
 
 def main():
     parser = argparse.ArgumentParser(description="Complete a task set: commit changes, merge to main, and delete the specified branch.")
+    # -n argument removed
     parser.add_argument(
         "-s", "--Summary",
         type=str,
@@ -65,34 +67,32 @@ def main():
         help="A brief summary description for the task set completion commit."
     )
     parser.add_argument(
-        "-b", "--branch",
+        "-b", "--branch", # Changed to standard name
         type=str,
-        required=True,
+        required=True, # Made required
         help="The specific branch name to commit, merge, and delete."
     )
-    parser.add_argument(
-        "--main-branch",
-        type=str,
-        default="main",
-        help="The name of the main integration branch (default: main)."
-    )
+
     parser.add_argument(
         "--preserve-branch",
         action="store_true",
         help="Preserve the feature branch (do not delete it after merge)"
     )
     args = parser.parse_args()
+    # task_set_id = args.TaskSetNumber # Removed
     summary = args.Summary
-    branch_to_merge = args.branch
-    main_branch = args.main_branch # Use the provided main branch name
+    branch_to_merge = args.branch # Use the required branch argument
 
+    # Update commit message format
     commit_message = format_complete_commit_message(branch_to_merge, summary)
+    main_branch = "main" # Assuming 'main' is the integration branch
 
     print(f"\n--- Completing Task on Branch {branch_to_merge} ---")
+    # print(f"Branch to merge: {branch_to_merge}") # Redundant now
     print(f"Summary: {summary}")
-    print(f"Main branch is: {main_branch}")
 
     current_branch = get_current_branch()
+    # If we couldn't get current branch, we can't safely proceed
     if not current_branch:
         print("Error: Could not determine current git branch. Cannot safely proceed with merge.")
         sys.exit(1)
@@ -142,6 +142,10 @@ def main():
          print("No changes staged to commit.")
     else:
          print("Warning: Could not reliably determine git status before commit.")
+         # Optionally proceed with commit attempt anyway, or exit
+         # For automation, maybe safer to exit if status is unclear
+         # print("Exiting due to unclear git status.")
+         # sys.exit(1)
          print("Attempting commit anyway...")
          commit_result = run_command(["git", "commit", "-m", commit_message], check=False)
          if commit_result and commit_result.returncode != 0:
@@ -191,7 +195,7 @@ def main():
     # 5. Clean up branches by default (unless --preserve-branch is set)
     if not args.preserve_branch and branch_to_merge != main_branch:
         print(f"\nStep 5: Cleaning up related branches (--cleanup-branch flag set)...")
-
+        
         # Determine the base branch name (e.g., OG-12_TS-3)
         base_branch_name = re.sub(r'_attempt-\d+$', '', branch_to_merge)
         print(f"Base identifier for cleanup: {base_branch_name}")
@@ -203,7 +207,7 @@ def main():
         else:
             all_local_branches = [b.strip('* ').strip() for b in list_all_result.stdout.splitlines()]
             branches_to_delete = []
-
+            
             # Identify base branch and all attempt branches for this Task Set
             for local_branch in all_local_branches:
                 if local_branch == base_branch_name or re.match(rf"^{re.escape(base_branch_name)}_attempt-\d+$", local_branch):
@@ -247,7 +251,7 @@ def main():
             print("Branch cleanup completed.")
     else:
         print("Branch preserved (used --preserve-branch flag).")
-
+    
     # Print final git status
     print("\nFinal git status:")
     run_command(["git", "status"], check=False)

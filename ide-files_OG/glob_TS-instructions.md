@@ -2,7 +2,7 @@
 
 ## Task Set Execution Steps
 
-1.   Read the *entire* Orchestrator Guide (`{OG-filepath}`) before starting. *(**DO NOT** read ide-files_OG/glob_TS-post-completion.md at this point. Follow the steps in order)*
+1.   Read the *entire* Orchestrator Guide (`{OG-filepath}`) before starting. *(**DO NOT** read `_10_ide/TS-post-completion.md` at this point. Follow the steps in order)*
 
 2.   Complete all tasks listed within the assigned Task Set (`{X}`).
 
@@ -16,7 +16,8 @@
 
 4.  **Document Key Outputs:** Before proceeding to the PCS, document any key outputs or information generated during the Task Set execution (e.g., lists of SKUs, configuration values, test results summaries) in the `#### TS-X Log:` section of the OG file. Ensure this information is clear and easily accessible for subsequent task sets.
 
-5.   **Read, understand, and execute** the instructions/rules in the "Post Completion Steps" by fetching and reading ide-files_OG/glob_TS-post-completion.md.
+5.   **Read, understand, and execute** the instructions/rules in the "Post Completion Steps" in `_10_ide/TS-post-completion.md`.
+
 
 
 ## Implementation Rules

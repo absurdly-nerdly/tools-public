@@ -27,8 +27,6 @@ This document outlines the process for splitting a large Orchestrator Guide (OG)
 6.  **Update Workflow:**
     *   When creating subtasks for the remaining Task Sets, provide the path to the **Part 2** OG file (`_XX_OG_Part2_Remaining_TSZ-N.md`) in the `new_task` message. This ensures the subtask mode receives only the relevant, manageable context.
     *   The original full OG (`_XX_OG_Original-Description.md`) can optionally be archived or kept for historical reference, but should *not* be used for subsequent subtasks. The Part 1 file serves as the historical record of completed work.
-7.  **Initiate Workflow:** After successfully verifying the state and potentially adjusting the OG on `main`, `suggest` creating a new subtask in Orchestrator Mode to formally begin execution of Task Set {X}. If approved, at minimum, provide to the subtask the path to the original OG (`[Relative Path to the Original OG File]`) and confirm the starting Task Set number ({X}) as context for the new task. If more context is helpful, provide it.
-8.  **Refer to Global Rules:** The subsequent steps for resuming execution and updating the OG during execution are defined in the global Orchestrator rules (.roo/rules-orche-global/rules.md).
 
 **Example (Based on OG-44):**
 

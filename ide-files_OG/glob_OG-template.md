@@ -15,8 +15,9 @@
 
 ## Initial State
 
-*   **Assessment:** [Describe the initial state of the project relevant to the task. This should be populated by the Orchestrator after creating the guide, using appropriate tools to assess the project.]
-*   **Relevant Outputs (Optional):** [Include any relevant outputs from initial checks (e.g., lint results, test runs, system info) that inform the Task Sets.]
+*   **Command:** `python _20_user-scripts/verification-suite.py --url [URL]`
+*   **Log Prompt:** [Specify any custom prompt used for log analysis, or "none" for default]
+*   **Results:** [Combined output from verification suite including lint and console log analysis]
 
 - - - - - - - - -
 
@@ -48,11 +49,14 @@
 
 3.  **TS-1 Validation & End State:**
 
-    ⚪ **Project-Specific Verification:** [Define clear, project-specific steps to verify the Task Set's completion and ensure no regressions. Specify the tools/commands to use (e.g., `npm test`, `python manage.py lint`, `playwright_get_visible_text`, `firebase-emulator-mcp firestore_get_document`).]
-       * [Specify expected outcomes, e.g., "Ensure all tests pass", "Verify console has no errors", "Confirm element X is visible", "Check database field Y has value Z".]
-    **Relevant Outputs (Optional):** [Space to record outputs from verification steps.]
+    ⚪ Run verification suite: `python _20_user-scripts/verification-suite.py --url [URL]`. Ensure:
+       * No critical console errors or warnings
+       * Page renders correctly
+       * No new linting issues
+    **Prompt Used:** [Specify the *exact* prompt used for log analysis, or "none" for default]
+    **Results:** [Combined output from verification suite]
 
-    ⚪ [Add or remove additional project-specific validation steps as needed. State requirements clearly.]
+    ⚪ [Add or remove tests as needed. State requirements clearly.]
 
 #### TS-1 Log:
 
@@ -92,11 +96,14 @@
 
 3.  **TS-2 Validation & End State:**
 
-    ⚪ **Project-Specific Verification:** [Define clear, project-specific steps to verify the Task Set's completion and ensure no regressions. Specify the tools/commands to use (e.g., `npm test`, `python manage.py lint`, `playwright_get_visible_text`, `firebase-emulator-mcp firestore_get_document`).]
-       * [Specify expected outcomes, e.g., "Ensure all tests pass", "Verify console has no errors", "Confirm element X is visible", "Check database field Y has value Z".]
-    **Relevant Outputs (Optional):** [Space to record outputs from verification steps.]
+    ⚪ Run verification suite: `python _20_user-scripts/verification-suite.py --url [URL]`. Ensure:
+       * No critical console errors or warnings
+       * Page renders correctly
+       * No new linting issues
+    **Prompt Used:** [Specify the *exact* prompt used for log analysis, or "none" for default]
+    **Results:** [Combined output from verification suite]
 
-    ⚪ [Add or remove additional project-specific validation steps as needed. State requirements clearly.]
+    ⚪ [Add or remove tests as needed. State requirements clearly.]
 
 #### TS-2 Log:
 
