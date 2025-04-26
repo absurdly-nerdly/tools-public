@@ -21,17 +21,28 @@ This section details how to create and populate an effective OG.
 
 ### A. Creating the OG File
 
-1.  **Run Script:** Execute `python ide-files_OG/glob_create-guide.py OG "<description>"`.
-    *   Replace `<description>` with a short, hyphenated summary.
-2.  **Action:** The script creates the OG file from the global template (`ide-files_OG/glob_OG-template.md`) in the `_00_user-docs/` directory and prints the relative path to the new OG file.
-3.  **Initial State Population:** After the file is created, manually populate the `## Initial State` section by assessing the project's current state using appropriate tools (e.g., running linters, basic tests, checking dependencies) and documenting the relevant findings.
+1.  **Delegate to Laborer:** Switch to Laborer mode to execute the OG creation workflow. Provide the following detailed instructions and a `<description>` during use of `switch_mode` tool. Adapt the Initial State Population steps to the project and task as needed. Do not leave decision-making to the Laborer:
+
+    *   **Run Script (Laborer):** Execute `python ide-files_OG/glob_create-guide.py OG "<description>"`.
+        *   Replace `<description>` with a short, hyphenated summary.
+        *   The script creates the OG file from the global template (`ide-files_OG/glob_OG-template.md`) in the `_00_user-docs/` directory and prints the relative path to the new OG file.
+    *   **Initial State Population (Instructed by Orchestrator, executed by Laborer):**
+        *   Based on the OG's purpose, assess project state using appropriate tools. Options:
+            -   Playwright MCP: Manual interaction steps (`playwright_navigate`, `playwright_click`, etc.).
+            -   Visual: Use `playwright-mcp` screenshot + `any-vision-mcp` analysis.
+            - Check dependency status (e.g., `npm outdated`, `pip list --outdated`)
+            - Review relevant files using `read_file` on key project files
+        *   Document findings in the Initial State section
+        *   Include specific metrics, errors, warnings
+        *   Note any blocking issues or concerns
+    *   **Switch to Orchestrator:** After completing Initial State Population, switch back to Orchestrator mode.
 
 ### B. Populating the OG File
-
-*   **Adhere to Template:** Read the newly created OG. Follow the pre-existing document structure strictly.
-*   **No Deletions:** **NEVER** delete pre-existing sections or headers. Only replace placeholder content and instructions within them.
+*   **Orchestrator:** Ensure you are in Orchestrator mode before proceeding.
+*   **Adhere to Template:** You now have the context of the newly created OG (via Laborer and `switch_mode`). Follow the pre-existing document structure strictly.
 *   **Instructions & Limited Code Snippets:** Provide methodical, step-by-step instructions in Task Sets using consistent terminology. Limit code snippets within the main OG document. If extensive code or supplemental information is needed, create an `_XX_OG_Appendix.md` file, link it in the relevant Task Set or task, and include the details there.
 *   **Self-Contained Context:** OGs and linked resources must contain all context needed for subtasks; do not rely on the original user message or referenced context without explicit links/paths/excerpts.
+*   **No Deletions:** **NEVER** delete pre-existing sections or headers. Only replace placeholder content and instructions within them.
 
 ### C. OG Section-Specific Guidelines
 
@@ -40,7 +51,7 @@ This section details how to create and populate an effective OG.
 *   **Incremental Implementation:** When writing or editing OGs for retries, structure tasks to first implement and validate minimal viable functionality, then build up additional features/requirements in subsequent tasks. This ensures early success points and isolates issues to specific implementation steps.
 *   **`## Relevant Files`**: List relevant file paths (relative to the workspace root) with brief explanations of their relevance. **CRITICAL:** Verify the existence and relevance of files and specific code references (functions, variables) *before* listing them or creating tasks involving them. Use tools like `list_files` or `read_file` on known parent components/files if uncertain about specific file paths or internal structure. Do not assume file organization or specific implementations.
 *   **`## Initial State`**:
-    *   **Manually populated** by the Orchestrator after guide creation. Document the project's state relevant to the task using outputs from project-specific tools (linters, tests, etc.).
+    *   **Manually populated** by the Laborer after guide creation. Document the project's state relevant to the task using outputs from project-specific tools (linters, tests, etc.).
 *   **`## Task Sets`**: Define the work units.
     *   **Limit:** Aim for a maximum of **6 Task Sets** per OG. This encourages focused guides. Do not artificially inflate Task Set complexity to meet this limit; prioritize logical task breakdown.
     *   **Pending Work Section:** If the required work logically exceeds 6 Task Sets, create a final section in the OG titled `## Pending Work`. Summarize the high-level objectives for the remaining work in this section *without* creating detailed Task Sets for them. These objectives can form the basis of a subsequent OG.
@@ -56,7 +67,7 @@ This section details how to create and populate an effective OG.
             *   **Mode:** Assign the appropriate mode (O-Coder or Researcher).
             *   **Instruction:** Clear, self-contained, actionable (verb-first). Max ~250 chars. Break down complex tasks. Include error handling considerations. *If referencing external documentation or specific file content is helpful or needed for the task, explicitly include a step including which method (e.g., `context7-mcp`, `read_file`) on the relevant resource/file.*
             *   **Automation:** Tasks MUST be achievable via available tools (MCP, `apply_diff`, `write_to_file`, `execute_command`, etc.). Manual steps are forbidden unless unavoidable.
-            *   **Scope:** Clearly state if setup (e.g., emulator seeding) is part of the task or a prerequisite.
+            *   **Scope:** Clearly state if setup (e.g., server startup, seeding) is part of the task or a prerequisite.
             *   **Status:** Use `⚪` for initial status.
         *   `**Validation & End State:**`
             *   Define steps to confirm *both* **TS completion** and **UI/system integrity**. Validation steps MUST explicitly state the tool/command used (e.g., `playwright_get_visible_text`, `firebase-emulator-mcp firestore_get_document`, `npm test`, `python manage.py lint`) and the *exact* comparison logic (e.g., 'verify text equals X', 'verify value is greater than Y', 'verify output contains Z'). Avoid vague descriptions like 'verify it works'.
@@ -64,7 +75,6 @@ This section details how to create and populate an effective OG.
                 *   Project-specific test runner (e.g., `npm test`, `pytest`)
                 *   Project-specific linter (e.g., `npm run lint`, `flake8`)
                 *   Playwright MCP: Manual interaction steps (`playwright_navigate`, `playwright_click`, etc.).
-                *   Firebase/Emulator MCP: Data verification queries.
                 *   Visual: Use `playwright-mcp` screenshot + `any-vision-mcp` analysis.
                 *   Custom Project Scripts: If the project has specific verification scripts.
             *   **Automation:** Validation steps MUST be achievable via tools. Consider custom Python scripts for complex/repeatable validation. Manual validation is forbidden unless unavoidable.
@@ -222,7 +232,6 @@ This workflow uses feature branches and automation scripts to manage Task Set im
         *   Prefer `data-testid` attributes for selectors (e.g., `[data-testid="product-card"]`).
         *   Use specific ARIA roles when available (e.g., `role="button"`).
         *   For complex UI state verification, use `playwright_evaluate` to execute JavaScript snippets that inspect DOM properties or component states.
-    *   Data Validation: Combine UI checks with direct data verification using `firebase-emulator-mcp` or `firebase-mcp` tools to confirm underlying state changes.
     *   Custom Project Scripts: If the project has specific verification scripts.
     Explicitly define the tool, command, and comparison logic in the OG validation steps.
 *   **Visual Validations:** Use `playwright_screenshot` + `any-vision-mcp` *only* when robust methods are insufficient or impractical for verifying the specific change (e.g., complex layout shifts, graphical element verification). Clearly justify its use in the OG Execution Notes or Validation step description.
