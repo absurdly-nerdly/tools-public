@@ -40,7 +40,7 @@ This section details how to create and populate an effective OG.
 ### B. Populating the OG File
 *   **Orchestrator:** Ensure you are in Orchestrator mode before proceeding.
 *   **Adhere to Template:** You now have the context of the newly created OG (via Laborer and `switch_mode`). Follow the pre-existing document structure strictly.
-*   **Instructions & Limited Code Snippets:** Provide methodical, step-by-step instructions in Task Sets using consistent terminology. Limit code snippets within the main OG document. If extensive code or supplemental information is needed, create an `_XX_OG_Appendix.md` file, link it in the relevant Task Set or task, and include the details there.
+*   **Instructions & Limited Code Snippets:** Provide methodical, step-by-step instructions in Task Sets using consistent terminology. Limit code snippets within the main OG document. If extensive code or supplemental information is needed, add to an `_XX_OG_Appendix.md` file, link it in the relevant Task Set or task, and include the details there.
 *   **Self-Contained Context:** OGs and linked resources must contain all context needed for subtasks; do not rely on the original user message or referenced context without explicit links/paths/excerpts.
 *   **No Deletions:** **NEVER** delete pre-existing sections or headers. Only replace placeholder content and instructions within them.
 
@@ -53,7 +53,8 @@ This section details how to create and populate an effective OG.
 *   **`## Initial State`**:
     *   **Manually populated** by the Laborer after guide creation. Document the project's state relevant to the task using outputs from project-specific tools (linters, tests, etc.).
 *   **`## Task Sets`**: Define the work units.
-    *   **Limit:** Aim for a maximum of **6 Task Sets** per OG. This encourages focused guides. Do not artificially inflate Task Set complexity to meet this limit; prioritize logical task breakdown.
+    *   **Content Limit:** Aim for a maximum of **4 Task Sets** with full content per OG, with **3** being preferred. If the required work logically exceeds this, add placeholder headers for subsequent Task Sets (e.g., `### Task Set 5: [Descriptive Title]`, `**Status:** ⚪`, optional brief description) without full details.
+    *   **Completed TS Archival:** Upon completing Task Sets and needing to add more to complete the High-Level Objective, move the *full content* of completed Task Sets into a OG appendix file (`_XX_OG_Appendix.md`). In the main OG, keep the completed Task Set header and status (e.g., `### Task Set 1: Implement Search Function`, `**Status:** ✅`), add a note referencing the appendix filename (e.g., `(Full content moved to _XX_OG_Appendix.md)`), and include a brief summary of its execution.
     *   **Pending Work Section:** If the required work logically exceeds 6 Task Sets, create a final section in the OG titled `## Pending Work`. Summarize the high-level objectives for the remaining work in this section *without* creating detailed Task Sets for them. These objectives can form the basis of a subsequent OG.
     *   **Overall Structure (for each Task Set `X` up to the limit):**
         *   `### Task Set X: [Descriptive Title]`
@@ -204,7 +205,7 @@ This workflow uses feature branches and automation scripts to manage Task Set im
     *   **Identify Adjustments:** Check for non-critical failures (validation steps ❌/✖️), warnings, or new information discovered during execution.
     *   **Update Future OG Tasks:** If adjustments are needed for *upcoming* Task Sets to maintain alignment or address new findings, update the OG accordingly.
     *   **Finalize TS Status:** Update the overall Task Set {TS-number} Status to ✅ in the OG, briefly noting any nuances or logged issues.
-    *   **Efficiency:** **Combine all necessary OG updates** (accuracy fixes, future task adjustments, status finalization) into a single file modification operation if feasible. Choose the most appropriate tool: `search_and_replace` for simple text/status changes (e.g., `**TS1 Status:** ⚪` to `**TS1 Status:** ✅`), `insert_content` for adding blocks like logs, `apply_diff` for replacing sections, or `write_to_file` for major rewrites.
+    *   **Efficiency:** **Combine all necessary OG updates** (accuracy fixes, future task adjustments, status finalization) into a single file modification operation if feasible. Tools `apply_diff` for replacing sections or small edits, or `write_to_file` for major rewrites, are preferred.
 
 5.  **Proceed to Next Task Set or Complete OG:**
     *   If there are more Task Sets in the OG, repeat the workflow from Step 1 for the next Task Set (the start script will commit the OG changes).
@@ -216,8 +217,7 @@ This workflow uses feature branches and automation scripts to manage Task Set im
 *   **Mode Usage:**
     *   Use **O-Coder** for  code implementation tasks.
     *   Use **Researcher** for information gathering, deep analysis, or investigating code issues identified during execution or validation.
-    *   **NEVER** perform implementation tasks yourself in Orchestrator mode.
-*   **Laborer Delegation:** For any instances in which Orchestrator must execute more than two well-defined, non-intelligent steps (e.g., combinations of `read_file`, `apply_diff`, `execute_command`, `use_mcp_tool`), switch mode to `Laborer` and provide the step-by-step instructions within the `thinking` section while using the `switch_mode` tool (include a final step to switch back to Orchestrator mode). If, for example, you must execute `read_file` and then `apply_diff` and then `read_file` again to confirm your change, instead of executing them in Orchestrator mode, switch to Laborer mode and provide the instructions for all steps (including switch back).
+    *   **NEVER** perform implementation tasks yourself in Orchestrator mode.
 *   **Unexpected Mode Switches:** If switched out of Orchestrator mode unexpectedly, immediately use `switch_mode` to return.
 *   **Mode Tracking:** On every response, state the mode you are in *currently*, in H4 format.
 *   **Efficiency - Combining Steps:** Where feasible, combine multiple actions into fewer tool uses. For example:
