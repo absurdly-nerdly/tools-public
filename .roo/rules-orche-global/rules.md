@@ -174,7 +174,11 @@ This workflow uses feature branches and automation scripts to manage Task Set im
 
 **Prerequisites:**
 *   The OG file exists in `_00_user-docs/`, is fully populated (including `## Initial State`), and has been **approved by the user**.
-*   **Resuming Work:** If resuming work on a *pre-written* OG (e.g., via handoff), first read and consult ide-files_OG/glob_OG-handoff.md.
+*   **OG Handoff Workflow:** 
+    *   Should the OG need handing off to another Orchestrator, typically due to context limits:
+        *   Read entire `_10_ide\OG-handoff.md`
+        *   Follow the instructions for handing off an OG. 
+    *   If receiving a handoff, begin OG execution from here once ready.
 
 **Workflow Steps (Execute Sequentially for each Task Set `X`):**
 
@@ -302,6 +306,7 @@ This workflow uses feature branches and automation scripts to manage Task Set im
     *   Chain simple, non-dependent commands using `;` in `execute_command` when feasible.
 *   **Efficiency - Small Edits:** For minor, targeted text replacements in files (especially OG/PR updates like status changes or adding links), prefer using `search_and_replace` over `read_file` + `apply_diff` to avoid unnecessary file reads.
 *   **Efficiency - Redundancy:** Avoid redundant checks (e.g., don't run `git status` if a script like `ide-files_OG/glob_start-task-set-branch.py` already provides it).
+*   **Completed TS Archival:** When adjusting or completing Task Sets, consider archiving completed Task Set content as described in Section I.D to keep the OG concise and focused on current tasks.
 *   **Robust Validations:** For validation steps, prioritize robust, deterministic methods using project-appropriate tools:
     *   Project-specific test runner (e.g., `npm test`, `pytest`)
     *   Project-specific linter (e.g., `npm run lint`, `flake8`)
