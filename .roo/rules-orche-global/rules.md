@@ -34,9 +34,10 @@ This section outlines the standard workflow for creating a new Orchestrator Guid
 ### B. Step 2: Plan Review (Consultant)
 
 1.  **Formulate Plan:** Based on the Researcher's report and the initial objectives, formulate a high-level plan for the OG (objectives, potential Task Sets).
-2.  **Switch to Consultant:** Use `switch_mode` to engage the `Consultant` mode.
-    *   **Included Context:** The conversation history (including Researcher's report and your plan outline) will serve as context.
-    *   **Goal:** Request the Consultant to review the proposed OG plan for feasibility, potential issues, alternative approaches, and alignment with best practices, based *only* on the provided context.
+2.  **Switch mode to Consultant:** Use `switch_mode` to engage the `Consultant` mode. During use of `switch_mode`, *state the following instructions for Consultant:*
+    ```
+        Consultant: Review the proposed OG plan for feasibility, potential issues, alternative approaches, and alignment with best practices, based *only* on the provided context (conversation history including Researcher's report and the plan outline).
+    ```
 3.  **Await Review:** The Consultant will provide a single response with feedback and suggestions, then automatically switch back to Orchestrator mode.
 
 ### C. Step 3: OG Creation (Orchestrator)
@@ -175,10 +176,12 @@ This workflow uses feature branches and automation scripts to manage Task Set im
 **Prerequisites:**
 *   The OG file exists in `_00_user-docs/`, is fully populated (including `## Initial State`), and has been **approved by the user**.
 *   **OG Handoff Workflow:** 
+    *   If receiving/continuing an OG already in progress, or user prompts with "RHO" (receive handoff), **ALWAYS:**
+        *   Read the entire `_10_ide\OG-handoff.md` file.
+        *   Follow the instructions to complete the handoff and begin execution.
     *   Should the OG need handing off to another Orchestrator, typically due to context limits:
         *   Read entire `_10_ide\OG-handoff.md`
         *   Follow the instructions for handing off an OG. 
-    *   If receiving a handoff, begin OG execution from here once ready.
 
 **Workflow Steps (Execute Sequentially for each Task Set `X`):**
 
@@ -238,30 +241,37 @@ This workflow uses feature branches and automation scripts to manage Task Set im
                             1. Run `python ide-files_OG/glob_fail-task-set.py`. This commits changes on the failed branch, checks out `main`, preserves the failed branch, and restores only necessary PR files to main.
                             2. Read the OG file: {OG-filepath} (now on main).
                             3. Locate the attempt tracking sections for Task Set {TS-number} (e.g., `#### TS-{TS-number} Next Attempt Number:`). If they don't exist, add them below `#### TS-{TS-number} Validation & End State:`.
-                            4. Increment the `TS-{TS-number} Next Attempt Number` count by 1. Let the new count be {NewAttemptNumber}.
+                            4. Increment the `TS-{TS-number} Next Attempt Number` count by 1. Let the new count be {NextAttemptNumber}.
                             5. If a `{PR_Path_if_exists_or_newly_created}` was provided and is not already listed, add its path to the `TS-{TS-number} Problem Reports` list (e.g., `[{PR_Path_List}, '{New_PR_Path}']`).
-                        - Use `attempt_completion` upon success, reporting the new attempt number: {NewAttemptNumber}.
+                        - Use `attempt_completion` upon success, reporting the new attempt number: {NextAttemptNumber}.
                         ```
                         *(Replace placeholders. Provide PR path if applicable. **Efficiency:** Ensure prompt is concise and clear.)*
-                2.  **Await & Review:** Wait for Laborer completion. Note the `{NewAttemptNumber}` reported. Review the updated OG content.
-                3.  **Analyze Failure & Choose Next Step:** Scrutinize the subtask's report, OG updates, PR (if any) and the verification output (from Step 2) to determine the root cause. When analyzing failures, especially after multiple attempts, consider splitting the task set into smaller, more granular tasks that can be executed and validated independently. Choose **ONE**:
-
+                2.  **(Orchestrator Mode) Switch mode to Consultant:** Wait for Laborer completion, noting the reported `{NextAttemptNumber}`, then `switch_mode` to Consultant. During use of `switch_mode`, *state the following instructions for Consultant:*
+                    ```
+                        **Analyze Failure & Choose Next Step:** Scrutinize the subtask's report (from the *failed* attempt branch), and all current information to determine the root cause of the current issue. When analyzing failures, especially after multiple attempts, consider splitting the task set into smaller, more granular tasks that can be executed and validated independently. Choose **ONE**:
                     *   **Option B.1: Adjust OG & Retry** (If cause seems addressable by plan changes)
-                        *   **Handle PR:**
-                            *   If `{ExistingPR}` is null: In the OG TS-{TS-number} log section, detail the failure (Attempt `{AttemptNumber}`, verification output) and planned OG adjustments. Let the new path be `{PR}`. **Efficiency:** Use a single `write_to_file` command to create and populate the PR based on the template fetched from ide-files_OG/glob_PR-template.md.
-                            *   If `{ExistingPR}` exists: Use `{ExistingPR}` as `{PR}`. Update it with the latest failure details and planned adjustments.
-                        *   **Consultant Review:** Switch mode to Consultant to plan the OG adjustments before applying them. The Consultant will provide a single response and switch back to Orchestrator mode.
-                        *   **Update OG:** Apply the planned adjustments (split TS, modify tasks, assign different mode, add Researcher TS) directly to the OG file. Ensure alignment with High-Level Objectives. **Efficiency:** Complete all updates to the OG file into a single `apply_diff` or `write_to_file` command.
-                        *   **Retry:** Go back to Step 1, using the retry branch name format: `OG-{OG_Number}_TS-{TS-number}_attempt-{NewAttemptNumber}` (the start script will handle committing the OG changes).
+                        *   *Provide details for next steps, including any necessary adjustments to the OG or task set.*
+                    *   **Option B.2: Initiate Deep Analysis (Researcher -> Analyst)** (If cause is unclear or complex, especially if `{NextAttemptNumber}` > 2)
+                        *   *Provide detailed guidance for the Researcher to gather information and analyze the failure, as well as details for next steps (state if and how they are dependent on Researcher results), including any necessary adjustments to the OG or task set.*
+                    ```
+                3.  **(Consultant Mode):** Will provide a single response and `switch_mode` back to Orchestrator mode.
+                4.  **(Orchestrator Mode) Incorporate Feedback & Choose Next Step:** Following the Consultant's feedback, choose **ONE**:
 
-                    *   **Option B.2: Initiate Deep Analysis (Researcher -> Analyst)** (If cause is unclear or complex, especially if `{NewAttemptNumber}` > 1)
+                    *   **Option B.1: Adjust OG & Retry**
+                        *   **Update OG:** 
+                            *   Apply the planned adjustments (split TS, modify tasks, assign different mode, add Researcher TS) directly to the OG file based on the Consultant's review and your analysis. Ensure alignment with High-Level Objectives.
+                            *   In the OG TS-{TS-number} log section, detail the failure (e.g., Attempt Number `{AttemptNumber}`, verification output). If a PR was created, include its relative path. Do not create a new PR. 
+                            *   **Efficiency:** Complete all updates to the OG file into a single `apply_diff` or `write_to_file` command.
+                        *   **Retry:** Go back to Step 1, using the retry branch name format: `OG-{OG_Number}_TS-{TS-number}_attempt-{NextAttemptNumber}` (the start script will handle committing the OG changes).
+
+                    *   **Option B.2: Initiate Deep Analysis (Researcher -> Analyst)**
                         *   **Handle PR:**
-                            *   If `{ExistingPR}` is null: Create a new PR using the template fetched from ide-files_OG/glob_PR-template.md. Detail failure (Attempt `{NewAttemptNumber}`, verification output), state deep analysis is starting. Let path be `{PR}`. **Efficiency:** Use a single `write_to_file` command to create and populate the PR.
+                            *   If `{ExistingPR}` is null: Create a new PR using the template fetched from ide-files_OG/glob_PR-template.md. Detail failure (Attempt `{NextAttemptNumber}`, verification output), state deep analysis is starting. Let path be `{PR}`. **Efficiency:** Use a single `write_to_file` command to create and populate the PR.
                         *   **Delegate Research & Analysis Handoff:** Create `new_task` for Researcher.
                             *   **Prompt:**
                                 ```
-                                🔍 Researcher: Gather Info & Initiate Analysis for OG-{OG_Number}_TS-{TS-number} Failure (Attempt {NewAttemptNumber})
-                                - Task Set {TS-number} in Orchestrator Guide (OG) '{OG-filepath}' failed execution (Attempt #{NewAttemptNumber}).
+                                🔍 Researcher: Gather Info & Initiate Analysis for OG-{OG_Number}_TS-{TS-number} Failure (Attempt {NextAttemptNumber})
+                                - Task Set {TS-number} in Orchestrator Guide (OG) '{OG-filepath}' failed execution (Attempt #{NextAttemptNumber}).
                                 1. Review the original OG: {OG-filepath}, focusing on Task Set {TS-number}.
                                 2. Review the Problem Report: {PR}, containing failure details/logs.
                                 3. Exhaustively gather relevant information based on the OG plan and failure details. The branch is still intact, so you can check out the branch, run tests, and gather additional info if needed. Ensure when work is complete on the feature branch, **always** switch back to the `main` branch.
@@ -273,12 +283,15 @@ This workflow uses feature branches and automation scripts to manage Task Set im
                                     b.   The newly appended PR section (do not include previously existing content).
                                 ```
                                 *(Replace placeholders. Ensure prompt is comprehensive and clearly references the OG and PR, and includes the handoff instructions.)*
-                        *   **(Orchestrator Mode) Switch mode to Consultant:** Wait for the Researcher -> Analyst subtask sequence to complete, then `switch_mode` to Consultant.
-                        *   **(Consultant Mode):** Review the Analyst's findings and all current information, and plan the OG adjustments. Provide a single response and `switch_mode` back to Orchestrator mode.
+                        *   **(Orchestrator Mode) Switch mode to Consultant:** Wait for the Researcher -> Analyst subtask sequence to complete, then `switch_mode` to Consultant. During use of `switch_mode`, *state the following instructions for Consultant:*
+                            ```
+                                Consultant: Review the Analyst's findings and all current information, and plan the OG adjustments.
+                            ``` 
+                        *   **(Consultant Mode):** Will provide a single response and `switch_mode` back to Orchestrator mode.
                         *   **(Orchestrator Mode) Incorporate Feedback & Update OG:** Analyze the Consultant's feedback, adjust strategy, and apply updates to the OG file (`{OG-filepath}`) based on the combined insights from the Analyst and Consultant. 
                         *   **Request User Review:** Use `ask_followup_question`. Inform user about failure, analysis, and OG updates made based on the analysis.
-                            *   **`ask_followup_question`:** "Task Set {TS-number} failed (Attempt {NewAttemptNumber}). Deep analysis was performed, and the OG/PR have been updated with findings and a revised plan. Please review the OG." *(Inform user about failure, analysis, and OG updates made based on the analysis.)*
-                            *   **DO NOT** proceed automatically. Await user approval to retry (Go back to Step 1, using retry branch name `OG-{OG_Number}_TS-{TS-number}_attempt-{NewAttemptNumber}`, the start script will handle committing the OG changes).
+                            *   **`ask_followup_question`:** "Task Set {TS-number} failed (Attempt {NextAttemptNumber}). Deep analysis was performed, and the OG/PR have been updated with findings and a revised plan. Please review the OG." *(Inform user about failure, analysis, and OG updates made based on the analysis.)*
+                            *   **DO NOT** proceed automatically. Await user approval to retry (Go back to Step 1, using retry branch name `OG-{OG_Number}_TS-{TS-number}_attempt-{NextAttemptNumber}`, the start script will handle committing the OG changes).
 
 4.  **Post-Success Review & Update:** After a successful merge (via Path A in Step 3):
     *   Review the final state of the completed Task Set {TS-number} section in the OG (updated by the subtask) and the verification output reported by the subtask.
@@ -321,8 +334,8 @@ This workflow uses feature branches and automation scripts to manage Task Set im
 *   **Context Limit Handling:** If `Current Context Size (Tokens)` exceeds 200,000 tokens, use `ask_followup_question` immediately.
     *   **Question:** "❗WARNING: CONTEXT SIZE = {token-count} TOKENS❗ Exceeding limit. How should we proceed?"
     *   **Suggestions:**
-        *   `<suggest>Initiate HANDOFF to a new Orchestrator instance by reading and using ide-files_OG/glob_OG-handoff.md.</suggest>`
-        *   `<suggest>SPLIT the current OG by reading and using ide-files_OG/glob_OG-split.md, then Initiate HANDOFF of Part 2 by reading and using ide-files_OG/glob_OG-handoff.md.</suggest>`
+        *   `<suggest>Initiate HANDOFF via `_10_ide\OG-handoff.md` instructions.</suggest>`
+        *   `<suggest>Archive completed Task Sets, then HANDOFF via `_10_ide\OG-handoff.md`.</suggest>`
 *   **User Approval Summary:** When asking for user approval, provide a digestible structured summary of the current situation.
 *   **Selector Verification:** Ensure that test selectors are thoroughly updated and verified against the actual component implementation, especially after component replacements or significant UI changes, to avoid test failures due to selector mismatches.
 *   **Complex UI Components:** Prioritize third-party components with clear documentation on testability and proven compatibility with Playwright. If documentation is lacking, complete research and comparison with other options and determine test methods *before* full implementation.
