@@ -244,8 +244,9 @@ This workflow uses feature branches and automation scripts to manage Task Set im
 
                     *   **Option B.1: Adjust OG & Retry** (If cause seems addressable by plan changes)
                         *   **Handle PR:**
-                            *   If `{ExistingPR}` is null: In the OG TS-{TS-number} log section, detail the failure (Attempt `{NewAttemptNumber}`, verification output) and planned OG adjustments. Let the new path be `{PR}`. **Efficiency:** Use a single `write_to_file` command to create and populate the PR based on the template fetched from ide-files_OG/glob_PR-template.md.
+                            *   If `{ExistingPR}` is null: In the OG TS-{TS-number} log section, detail the failure (Attempt `{AttemptNumber}`, verification output) and planned OG adjustments. Let the new path be `{PR}`. **Efficiency:** Use a single `write_to_file` command to create and populate the PR based on the template fetched from ide-files_OG/glob_PR-template.md.
                             *   If `{ExistingPR}` exists: Use `{ExistingPR}` as `{PR}`. Update it with the latest failure details and planned adjustments.
+                        *   **Consultant Review:** Switch mode to Consultant to plan the OG adjustments before applying them. The Consultant will provide a single response and switch back to Orchestrator mode.
                         *   **Update OG:** Apply the planned adjustments (split TS, modify tasks, assign different mode, add Researcher TS) directly to the OG file. Ensure alignment with High-Level Objectives. **Efficiency:** Complete all updates to the OG file into a single `apply_diff` or `write_to_file` command.
                         *   **Retry:** Go back to Step 1, using the retry branch name format: `OG-{OG_Number}_TS-{TS-number}_attempt-{NewAttemptNumber}` (the start script will handle committing the OG changes).
 
@@ -262,12 +263,15 @@ This workflow uses feature branches and automation scripts to manage Task Set im
                                 3. Exhaustively gather relevant information based on the OG plan and failure details. The branch is still intact, so you can check out the branch, run tests, and gather additional info if needed. Ensure when work is complete on the feature branch, **always** switch back to the `main` branch.
                                 ... [provide comprehensive description of issue with any potential sources for relevant information.] ...
                                 4. Switch mode to `Analyst` and initiate RCA based on research findings.
-                                5. While in Analyst mode: Perform Root Cause Analysis (RCA) for OG-{OG_Number}_TS-{TS-number} Failure (Attempt {NewAttemptNumber}). Use all gathered information in the analysis. **Append** your RCA and concrete, actionable suggestions for modifying the *original* OG's Task Set {TS-number} (or surrounding Task Sets) to the PR ('{PR}').
-                                6. Use `attempt_completion` to briefly report the completion of the RCA. Include the file path of the PR and a brief summary of your findings. Instruct the user to read the updated PR for full details on the RCA."
+                                5. While in Analyst mode: Perform Root Cause Analysis (RCA) for OG-{OG_Number}_TS-{TS-number} Failure (Attempt {AttemptNumber}). Use all gathered information in the analysis. **Append** your analysis to the **end** of the existing PR ('{PR}').
+                                6. Use `attempt_completion` to report, in their entirety and without any modifications or omissions, the  content of:
+                                    a.  The newly created research summary. 
+                                    b.   The newly appended PR section (do not include previously existing content).
                                 ```
                                 *(Replace placeholders. Ensure prompt is comprehensive and clearly references the OG and PR, and includes the handoff instructions.)*
-                        *   **Await Subtask Completion:** Wait for the Researcher -> Analyst subtask sequence to complete.
-                        *   **(Orchestrator Mode):** **Read the updated PR (`{PR}`)** which now contains the Analyst's appended RCA and suggestions. Analyze, adjust strategy, and apply updates to the OG file (`{OG-filepath}`) based on the insights.
+                        *   **(Orchestrator Mode) Switch mode to Consultant:** Wait for the Researcher -> Analyst subtask sequence to complete, then `switch_mode` to Consultant.
+                        *   **(Consultant Mode):** Review the Analyst's findings and all current information, and plan the OG adjustments. Provide a single response and `switch_mode` back to Orchestrator mode.
+                        *   **(Orchestrator Mode) Incorporate Feedback & Update OG:** Analyze the Consultant's feedback, adjust strategy, and apply updates to the OG file (`{OG-filepath}`) based on the combined insights from the Analyst and Consultant. 
                         *   **Request User Review:** Use `ask_followup_question`. Inform user about failure, analysis, and OG updates made based on the analysis.
                             *   **`ask_followup_question`:** "Task Set {TS-number} failed (Attempt {NewAttemptNumber}). Deep analysis was performed, and the OG/PR have been updated with findings and a revised plan. Please review the OG." *(Inform user about failure, analysis, and OG updates made based on the analysis.)*
                             *   **DO NOT** proceed automatically. Await user approval to retry (Go back to Step 1, using retry branch name `OG-{OG_Number}_TS-{TS-number}_attempt-{NewAttemptNumber}`, the start script will handle committing the OG changes).
