@@ -78,18 +78,23 @@
     *   Read all files listed in the assigned Task Set's (`{X}`) `Files to Edit` and `Resources` sections.
     *   Read any other files necessary per OG instructions.
     *   *(Do NOT read `_10_ide/TS-post-completion.md` yet).*
-2.  **Switch to Architect:** Use `switch_mode`.
-3.  **Plan (Architect):**
-    *   State current mode (`Architect Mode`).
-    *   Formulate and state a detailed, step-by-step execution plan based on the OG Task Set (`{X}`) and gathered context.
+2.  **Switch to Architect:** Use `switch_mode` to engage the `Architect` mode.
+3.  **(Architect) Form and State Plan:** 
+        *   State current mode (`Architect Mode`).
+        *   Formulate and state a detailed, step-by-step execution plan based on the OG Task Set (`{X}`) and gathered context. 
+            *   Adhere strictly to the OG High Level Objectives, OG Task Set {X} notes/steps, Execution Rules below, and user instructions.
+            *   Include failure handling in the plan for any foreseeable issues/obstacles.
+            *   Include in your statement that if any issue or unexpected behavior occurs, you will switch immediately to Debug mode to expand knowledgebase and abilities.
+        *   Use `switch_mode` to the Assigned Mode specified for this Task Set in the OG and initial user message. 
 
-**Phase 2: Execution & Wrap-up (Architect -> Assigned Mode)**
 
-4.  **Switch to Assigned Mode:** Use `switch_mode` to the mode specified in the OG (`{Mode}`).
-5.  **Execute (Assigned Mode - `{Mode}`):**
+**Phase 2: Execution**
+
+4.  **Confirm Assigned Mode:** If not already in the Assigned Mode for the TS, use `switch_mode` to the mode specified in the OG (`{Mode}`).
+5.  **Execute Plan:**
     *   State current mode (`{Mode} Mode`).
     *   Execute the Architect's plan, completing all tasks in the assigned Task Set (`{X}`). 
-    *   Adhere strictly to the Task Set Execution Rules below and OG/user instructions.
+    *   Adhere strictly to the OG High Level Objectives, OG Task Set {X} notes/steps, rules below, and user instructions.
 6.  **Validate:**
     *   Execute *all* validation steps defined in the Task Set's "Validation & End State".
     *   **Rerun on Edit:** If any validation leads to code edits, restart and rerun *all* validation steps consecutively. Debug and iterate until all validations pass consecutively.

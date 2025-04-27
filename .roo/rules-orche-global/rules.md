@@ -95,10 +95,12 @@ This section outlines the standard workflow for creating a new Orchestrator Guid
 ## Task Sets
 
 *   **Content Limit:** Aim for a maximum of **3-4 Task Sets** with full content per OG.
+*   **Numbering:** Task Sets should be numbered starting at 10 and incrementing by 10 (e.g., 10, 20, 30...). This allows for inserting intermediate Task Sets (e.g., 15, 25) later without requiring renumbering of subsequent sets.
 *   **Exceeding Limit:** If more Task Sets are needed:
-    *   Add placeholder headers for subsequent Task Sets (e.g., `### Task Set 5: [Descriptive Title]`, `**Status:** ⚪`, optional brief description) without full details.
+    *   Add placeholder headers for subsequent Task Sets (e.g., `### Task Set 40: [Descriptive Title]`, `**Status:** ⚪`, optional brief description) without full details.
     *   If work exceeds ~6 Task Sets, create a final `## Pending Work` section summarizing remaining high-level objectives instead of placeholder Task Sets.
 *   **Completed TS Archival:** (Applies during execution, see Section II) Move completed TS content to `_XX_OG_Appendix.md`, leaving header, status, reference note, and summary.
+    *   Preserve/distill any information (e.g., key findings, workarounds, insights) from the completed TS that is critical or helpful to subsequent Task Sets.
 
 - - - - - - - - -
 
@@ -121,7 +123,8 @@ This section outlines the standard workflow for creating a new Orchestrator Guid
 **Tasks:** *(Numbered list)*
 1.  ⚪ | {Mode} | [Instruction: Clear, self-contained, actionable (verb-first). Max ~250 chars. Break down complex tasks. Include error handling. Explicitly mention required `read_file` or `context7-mcp` steps if needed.]
 2.  ⚪ | {Mode} | [Instruction...]
-    *   *(Mode: Assign O-Coder or Researcher)*
+2.  ⚪ | {Mode} | [Instruction...]
+    *   *(Mode: Assign O-Coder (for most tasks), Researcher, or Debug)*
     *   *(Automation: Tasks MUST be achievable via available tools. Manual steps forbidden unless unavoidable.)*
     *   *(Scope: Clearly state if setup (e.g., server start, seeding) is part of the task or a prerequisite.)*
 
@@ -135,21 +138,21 @@ This section outlines the standard workflow for creating a new Orchestrator Guid
     *   **Expected Outcome:** [...]
     *   *(Automation: Validation MUST be achievable via tools. Consider custom scripts for complex validation. Manual validation forbidden unless unavoidable.)*
 
-#### TS-1 Log:
+#### TS-10 Log:
 *   *Results Summary:* [Leave empty - for subtask completion report]
 *   *Deviations:* [Leave empty]
 *   *Important Notes:* [Leave empty]
 *   *Suggestions for Codebase:* [Leave empty]
 *   *Suggestions for Rules:* [Leave empty]
 
-#### TS-1 Next Attempt Number: 1 *(Initialize to 1)*
-#### TS-1 Problem Reports: [] *(Initialize empty)*
+#### TS-10 Next Attempt Number: 1 *(Initialize to 1)*
+#### TS-10 Problem Reports: [] *(Initialize empty)*
 
 - - - - - - - - -
 
 ### Task Set 2: [Descriptive Title]
 
-*(Repeat structure for subsequent Task Sets up to the limit)*
+*(Repeat structure for subsequent Task Sets up to the limit, incrementing by 10)*
 
 - - - - - - - - -
 
@@ -188,7 +191,7 @@ This workflow uses feature branches and automation scripts to manage Task Set im
 1.  **Delegate to Laborer via `new_task`:** Create a new task for `Laborer` to execute the Task Set steps (branching, subtask creation, validation).
     *   **Action:** Create a `new_task` for `Laborer`. Provide the following message, ensuring all placeholders `{...}` are filled with the correct values:
         ```
-        🌿🛠️ Laborer: Execute 'Task Set Branch Workflow' for OG-{OG_Number}_TS-{TS-number}_Attempt-{AttemptNumber}
+        🌿🛠️ Laborer: Execute 'Task Set Branch Workflow' for OG-{OG_Number}_TS-{TS-number}_attempt-{AttemptNumber}
 
         **Instructions:**
         1. Execute the 'Task Set Branch Workflow' as defined globally (in `ide-files_OG/glob_TS-instructions.md`, `read_file` only lines 3-50)
@@ -307,11 +310,16 @@ This workflow uses feature branches and automation scripts to manage Task Set im
 
 ## III. General Notes & Policies
 
+*   **Branch Naming:** All Task Set branches **must** follow the format `OG-{OG_Number}_TS-{TS-number}_attempt-{AttemptNumber}`.
+*   **Numbering:** Task Set numbers (`TS-number`) and Attempt numbers (`AttemptNumber`) **must** be whole integers (e.g., 10, 20, 1, 2). Do not use decimals or fractions.
 *   **Adaptability:** Adjust the workflow dynamically to meet High-Level Objectives, logging all changes and deviations in the OG or relevant PRs.
 *   **Mode Usage:**
+    *   For Task Set Assigned Modes, only use O-Coder (for most tasks), Researcher, or Debug.
     *   Use **O-Coder** for  code implementation tasks.
     *   Use **Researcher** for information gathering, deep analysis, or investigating code issues identified during execution or validation.
-    *   **NEVER** perform implementation tasks yourself in Orchestrator mode.
+    *   Use **Debug** for debugging tasks.
+    *   **NEVER** perform implementation tasks yourself in Orchestrator mode.
+    *   **NEVER** implement code changes via `new_task` without following the OG/TS/Laborer Task Set Branch Workflow.
 *   **Unexpected Mode Switches:** If switched out of Orchestrator mode unexpectedly, immediately use `switch_mode` to return.
 *   **Mode Tracking:** On every response, state the mode you are in *currently*, in H4 format.
 *   **Efficiency - Combining Steps:** Where feasible, combine multiple actions into fewer tool uses. For example:
