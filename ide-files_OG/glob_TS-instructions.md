@@ -12,12 +12,14 @@
     *   **Action:** The script prints `git status`, checks out `main`, commits pending changes, creates the branch (`OG-{OG_Number}_TS-{TS-number}_attempt-{N}`), checks it out, and runs `git status` again.
     *   **Verify:** Confirm branch creation/checkout using `git status` or `git branch --show-current`. Retry twice on failure. If third attempt fails, report via `ask_followup_question` with error. Do not proceed until successful.
 
-2.  **Identify Mode & Create Subtask:** Delegate the Task Set implementation.
+2. Read the {OG_file_path}, take note of the content in the assigned {TS-number}, and determine the *unique* validation check you will do in Step 4.
+
+3.  **Identify Mode & Create Subtask:** Delegate the Task Set implementation.
     *   **Identify:** Use the `{Mode}` variable provided.
-    *   **Create `new_task` for Laborer:** Use the following message **VERBATIM**, replacing placeholders with variables provided:
+    *   **Create `new_task` for {Mode}:** Use the following message **VERBATIM**, replacing placeholders:
         ```
         🌿 {Mode}: OG-{OG_Number}_TS-{TS-number}_Attempt-{AttemptNumber}
-        *Starting in Laborer mode. Follow instructions precisely:*
+        *Follow instructions precisely:*
         *In `ide-files_OG/glob_TS-instructions.md`, `read_file` only lines 60-120, find the 'Task Set Subtask Workflow' section, and follow those instructions exactly.*
         *Use these variables:*
         - OG File Path: {OG-filepath}
@@ -28,9 +30,7 @@
     *   **Action:** The subtask will start in Laborer mode and follow the workflow, and respond with the specified format (Auth Icons + message).
     *   **Verify:** Ensure the message from the subtask includes any required information for subsequent Task Sets.
 
-3.  **Await Subtask Completion:** Wait for the subtask's response.
-
-4.  **Validate Subtask Execution:** Verify the work done in the subtask.
+4.  **Validate Subtask Execution:** Wait for the subtask's response, then verify the work done in the subtask.
     *   **Run Verification Steps:** Execute the project-specific verification steps defined in the OG's 'Validation & End State' section for this Task Set.
         *   **Command:** [Refer to the OG for the specific commands/tool usage]
         *   *(Use variables provided: `{CurrentBranchName}`, `{URL_from_OG}`, `{LogPrompt_from_OG}`, `{ImagePrompt_from_OG}`. Source URL/prompts from OG's `Validation & End State` for TS-{TS-number}. Only include prompt args if specified.)*
@@ -38,7 +38,13 @@
         *   **Review:** Examine the output for critical errors/warnings and compare against expected results in the OG.
     *   **Perform Unique Check:** Execute at least one *unique* validation step specific to the Task Set's goal (e.g., Playwright MCP interaction, `read_file` check, `firebase-emulator-mcp` query, `playwright_mcp` screenshot + `any-vision-mcp` analysis, etc.) to confirm the core change.
 
-5.  **Respond via `attempt_completion`:** Report comprehensive results: a) verification script outcome, b) unique validation type and outcome, c) subtask completion message. Ensure all details are captured.
+5.  **Check/Edit the OG:** Re-read the entire Orchestrator Guide (`{OG-filepath}`) and verify:
+    *   **Task Set Status:** Check the Task Set status (e.g., `**TS-X Status:** ⚪`). If not `⚪`, then set it to `⚪` (reserved for later use).
+    *   **Individual Task/Validation Step Status:** Read the status of each task in the Task Set. If any status is incorrect, update it.
+    *   **Task Set Logs** Read the Task Set Log section and ensure it is up to date. If not, update it. 
+        *   *Add a note to the Task Set Log if the Task Set subtask did not update the OG at all.*
+    
+6.  **Respond via `attempt_completion`:** Report comprehensive results: a) verification script outcome, b) unique validation type and outcome, c) subtask completion message, d) entire content of only the Task Set Validation/End State section and Task Set Log section of the assigned TS. Ensure all details are captured.
 -- -- --
 
 
@@ -66,14 +72,14 @@
 
 
 
-## Task Set Execution Instructions (Executed by Assigned Mode, starting in Laborer) (approx. lines 60-120)
+## Task Set Execution Instructions (approx. lines 60-120)
 
 ### Task Set Execution Workflow
-*Follow these steps precisely. The initial mode is Laborer.*
+*Follow these steps precisely.*
 
-**Phase 1: Preparation (Laborer -> Architect)**
+**Phase 1: Preparation (Assigned Mode -> Architect)**
 
-1.  **Read OG & Context (Laborer):**
+1.  **Read OG & Context (Assigned Mode):**
     *   Read the *entire* Orchestrator Guide (`{OG-filepath}`).
     *   Read all files listed in the assigned Task Set's (`{X}`) `Files to Edit` and `Resources` sections.
     *   Read any other files necessary per OG instructions.
@@ -113,5 +119,4 @@
 *   **Mode Tracking:** State current mode in *every* response.
 *   **Missing Components:** Report via `attempt_completion` if components expected to exist don't exist.
 *   **Test Strategy Docs:** Add clear docstrings for complex UI interaction strategies/helpers.
-*   **Laborer Restrictions:** Laborer MUST NOT use `switch_mode` except as directed by workflow (to Architect, then Assigned Mode). Laborer MUST NOT switch to any other mode. If issues are encountered while in Laborer mode, report them via `ask_followup_question` or `attempt_completion`. 
 -- -- --
