@@ -95,7 +95,7 @@ This section outlines the standard workflow for creating a new Orchestrator Guid
 ## Task Sets
 
 *   **Content Limit:** Aim for a maximum of **3-4 Task Sets** with full content per OG.
-*   **Numbering:** Task Sets should be numbered starting at 10 and incrementing by 10 (e.g., 10, 20, 30...). This allows for inserting intermediate Task Sets (e.g., 15, 25) later without requiring renumbering of subsequent sets.
+*   **Numbering:** Task Sets start at 10, incrementing by 10 (e.g., 10, 20, 30...). Insert intermediate Task Sets using midpoints (e.g., 15) and leaving gaps (e.g., inserting 28 after 25) to allow future insertions without renumbering (e.g., start with 10 and 20, insert 25, then 23, then 21).
 *   **Exceeding Limit:** If more Task Sets are needed:
     *   Add placeholder headers for subsequent Task Sets (e.g., `### Task Set 40: [Descriptive Title]`, `**Status:** ⚪`, optional brief description) without full details.
     *   If work exceeds ~6 Task Sets, create a final `## Pending Work` section summarizing remaining high-level objectives instead of placeholder Task Sets.
@@ -104,7 +104,7 @@ This section outlines the standard workflow for creating a new Orchestrator Guid
 
 - - - - - - - - -
 
-### Task Set 1: [Descriptive Title]
+### Task Set 10: [Descriptive Title]
 
 **Status:** ⚪ *(Initial Status)*
 
@@ -144,13 +144,12 @@ This section outlines the standard workflow for creating a new Orchestrator Guid
 *   *Important Notes:* [Leave empty]
 *   *Suggestions for Codebase:* [Leave empty]
 *   *Suggestions for Rules:* [Leave empty]
-
-#### TS-10 Next Attempt Number: 1 *(Initialize to 1)*
-#### TS-10 Problem Reports: [] *(Initialize empty)*
+*   *TS-10 Problem Reports:* [Initialize empty]
+*   *TS-10 Next Attempt #:* [Initialize to 1]
 
 - - - - - - - - -
 
-### Task Set 2: [Descriptive Title]
+### Task Set 20: [Descriptive Title]
 
 *(Repeat structure for subsequent Task Sets up to the limit, incrementing by 10)*
 
@@ -171,6 +170,11 @@ This section outlines the standard workflow for creating a new Orchestrator Guid
 *   **Incremental Implementation:** When writing or editing OGs for retries, structure tasks to first implement and validate minimal viable functionality, then build up additional features/requirements in subsequent tasks.
 *   **Research Task Sets:** If significant external info is needed *during* OG execution, create a dedicated `Researcher` Task Set. Define the research goal, use `new_task` to delegate, await findings, and specify where results should be integrated in subsequent Task Sets.
 *   **Omit Unused:** Remove placeholder tasks/tests if not applicable to the specific Task Set or application.
+
+### D. Formatting and Structure
+
+*   The OG template structure (`_10_ide/OG-template.md`) is **strict**. Do not alter headers, status markers, or the fundamental layout.
+*   Adding content *within* the defined structure (objectives, files, tasks, etc.) is required.
 
 ## II. Task Set Coordination Workflow
 
